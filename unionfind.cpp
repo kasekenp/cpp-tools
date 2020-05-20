@@ -1,47 +1,69 @@
 #include <bits/stdc++.h>
 using namespace std;
-int MAXN = 100001;
-vector<int> Tree(MAXN, 0);
 
-void init(int N)
+struct UnionFind
 {
-  for (int i = 1; i <= N; i++)
-    Tree.at(i) = i;
-}
+  vector<int> par;
+  vector<int> rank;
 
-int root(int x)
-{
-  if (Tree.at(x) == x)
-    return x; // 根
-  else
-    return Tree.at(x) = root(Tree.at(x)); // 経路圧縮
-}
+  UnionFind(int n = 1)
+  {
+    init(n);
+  }
 
-bool same(int x, int y)
-{
-  return root(x) == root(y);
-}
+  void init(int n = 1)
+  {
+    par.resize(n);
+    rank.resize(n);
+    for (int i = 0; i < n; ++i)
+      par[i] = i, rank[i] = 0;
+  }
 
-void unite(int x, int y)
-{
-  x = root(x);
-  y = root(y);
-  if (x == y)
-    return;
-  Tree.at(x) = y;
-}
+  int root(int x)
+  {
+    if (par[x] == x)
+      return x;
+    int r = root(par[x]);
+    return par[x] = r;
+  }
+
+  bool same(int x, int y)
+  {
+    return root(x) == root(y);
+  }
+
+  bool unite(int x, int y)
+  {
+    x = root(x);
+    y = root(y);
+    if (x == y)
+      return false;
+    if (rank[x] < rank[y])
+      swap(x, y);
+    if (rank[x] == rank[y])
+      ++rank[x];
+    par[y] = x;
+    return true;
+  }
+};
 
 int main()
 {
-  int N, Q, p, a, b;
+  int64_t N, Q, c, x, y;
   cin >> N >> Q;
-  init(N);
+  UnionFind uf(N);
+  vector<tuple<bool, int, int>> vt;
   for (int i = 0; i < Q; i++)
   {
-    cin >> p >> a >> b;
-    if (p)
-      cout << (same(a, b) ? "Yes" : "No") << endl;
+    cin >> c >> x >> y;
+    vt.push_back(make_tuple(c, x, y));
+  }
+  for (int i = 0; i < Q; i++)
+  {
+    tie(c, x, y) = vt.at(i);
+    if (c)
+      cout << uf.same(x, y) << endl;
     else
-      unite(a, b);
+      uf.unite(x, y);
   }
 }
