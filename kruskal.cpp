@@ -1,9 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define MAX 10000
-#define INFTY (1 << 29)
-
 class DisjointSet
 {
 public:
