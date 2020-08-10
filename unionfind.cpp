@@ -4,7 +4,8 @@ using namespace std;
 struct UnionFind
 {
   vector<int> par;
-  vector<int> rank;
+  vector<int> sz;
+  vector<int> es;
 
   UnionFind(int n = 1)
   {
@@ -14,17 +15,20 @@ struct UnionFind
   void init(int n = 1)
   {
     par.resize(n);
-    rank.resize(n);
+    sz.resize(n);
+    es.resize(n);
     for (int i = 0; i < n; ++i)
-      par[i] = i, rank[i] = 0;
+    {
+      par[i] = i;
+      sz[i] = 1;
+    }
   }
 
   int root(int x)
   {
     if (par[x] == x)
       return x;
-    int r = root(par[x]);
-    return par[x] = r;
+    return par[x] = root(par[x]);
   }
 
   bool same(int x, int y)
@@ -32,18 +36,29 @@ struct UnionFind
     return root(x) == root(y);
   }
 
-  bool unite(int x, int y)
+  void unite(int x, int y)
   {
     x = root(x);
     y = root(y);
+    es[x]++;
     if (x == y)
-      return false;
-    if (rank[x] < rank[y])
+      return;
+    if (sz[x] > sz[y])
       swap(x, y);
-    if (rank[x] == rank[y])
-      ++rank[x];
-    par[y] = x;
-    return true;
+    par[x] = y;
+    sz[y] += sz[x];
+    es[y] += es[x];
+    return;
+  }
+
+  int size(int x)
+  {
+    return sz[root(x)];
+  }
+
+  int esize(int x)
+  {
+    return es[root(x)];
   }
 };
 
