@@ -1,12 +1,13 @@
 #include <bits/stdc++.h>
 using namespace std;
 const int INF = (1 << 30);
+const int MAXV = 105;
 struct edge
 {
   int to, cap, rev;
 };
-vector<edge> G[105];
-bool used[105];
+vector<edge> G[MAXV];
+bool used[MAXV];
 
 void add_edge(int from, int to, int cap)
 {
