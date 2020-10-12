@@ -1,11 +1,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 const int MAX = 100010;
-const int MOD = 1000000007;
+const int64_t MOD = 1000000007;
 
 int64_t fac[MAX], finv[MAX], inv[MAX];
 
-void COMinit()
+void initCombination()
 {
   fac[0] = fac[1] = 1;
   finv[0] = finv[1] = 1;
@@ -18,7 +18,7 @@ void COMinit()
   }
 }
 
-int64_t COM(int n, int k)
+int64_t nCk(int n, int k)
 {
   if (n < k)
     return 0;
