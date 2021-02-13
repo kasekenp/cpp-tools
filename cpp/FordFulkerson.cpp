@@ -1,63 +1,107 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int INF = (1 << 30);
-const int MAXV = 105;
-struct edge
-{
-  int to, cap, rev;
-};
-vector<edge> G[MAXV];
-bool used[MAXV];
 
-void add_edge(int from, int to, int cap)
+struct Edge
 {
-  G[from].push_back((edge){to, cap, (int)(G[to].size())});
-  G[to].push_back((edge){from, 0, (int)(G[from].size() - 1)});
-}
-
-int dfs(int v, int t, int f)
-{
-  if (v == t)
-    return f;
-  used[v] = true;
-  for (auto &e : G[v])
+  int from, to, rEdge;
+  long long capacity;
+  Edge(int f, int t, int r, long long c)
   {
-    if (!used[e.to] && e.cap > 0)
+    from = f;
+    to = t;
+    rEdge = r;
+    capacity = c;
+  }
+};
+
+struct Graph
+{
+  vector<vector<Edge>> graph;
+  Graph(int n)
+  {
+    graph.resize(n);
+  }
+
+  Edge &rEdge(Edge &e)
+  {
+    return graph[e.to][e.rEdge];
+  }
+
+  vector<Edge> &at(int v)
+  {
+    return graph.at(v);
+  }
+
+  int size()
+  {
+    return graph.size();
+  }
+
+  void addEdge(int from, int to, int capacity)
+  {
+    graph[from].push_back(Edge(from, to, graph[to].size(), capacity));
+    graph[to].push_back(Edge(to, from, graph[from].size() - 1, 0));
+  }
+};
+
+class FordFulkerson
+{
+private:
+  vector<bool> used;
+  // NOTE: フロー増加路を探し、増加分のフローを返す
+  long long dfs(Graph &graph, int v, int goal, long long curFlow)
+  {
+    if (v == goal)
     {
-      int d = dfs(e.to, t, min(f, e.cap));
-      if (d > 0)
+      return curFlow;
+    }
+    used.at(v) = true;
+    for (auto &e : graph.at(v))
+    {
+      if (used.at(e.to) || e.capacity <= 0)
       {
-        e.cap -= d;
-        G[e.to][e.rev].cap += d;
-        return d;
+        continue;
+      }
+      auto finalFlow = dfs(graph, e.to, goal, min(curFlow, e.capacity));
+      if (finalFlow > 0)
+      {
+        e.capacity -= finalFlow;
+        graph.rEdge(e).capacity += finalFlow;
+        return finalFlow;
       }
     }
+    return 0;
   }
-  return 0;
-}
 
-int max_flow(int s, int t)
-{
-  int flow = 0;
-  for (;;)
+public:
+  long long maxFlow(Graph &graph, int start, int goal)
   {
-    memset(used, 0, sizeof(used));
-    int f = dfs(s, t, INF);
-    if (f == 0)
-      return flow;
-    flow += f;
+    long long flow = 0;
+    while (true)
+    {
+      used.assign(graph.size(), 0);
+      auto addedFlow = dfs(graph, start, goal, (1LL << 62));
+      if (addedFlow == 0)
+      {
+        return flow;
+      }
+      flow += addedFlow;
+    }
+    return flow;
   }
-}
+};
 
 int main()
 {
-  int V, E;
-  cin >> V >> E;
-  for (int i = 0; i < E; i++)
+  int v, e;
+  cin >> v >> e;
+  Graph graph(v);
+  for (int i = 0; i < e; i++)
   {
-    int u, v, c;
-    cin >> u >> v >> c;
-    add_edge(u, v, c);
+    int from, to, cap;
+    cin >> from >> to >> cap;
+    graph.addEdge(from, to, cap);
   }
-  cout << max_flow(0, V - 1) << endl;
+  FordFulkerson ff;
+  cout << ff.maxFlow(graph, 0, v - 1) << endl;
 }
