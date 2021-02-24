@@ -10,7 +10,6 @@ void dijkstra(int start)
 {
   priority_queue<P, vector<P>, greater<P>> PQ;
   vector<long long> D(V, INF);
-  vector<bool> visited(V, false);
 
   D.at(start) = 0;
   PQ.emplace(0, start);
@@ -19,7 +18,6 @@ void dijkstra(int start)
     long long dv, v;
     tie(dv, v) = PQ.top();
     PQ.pop();
-    visited.at(v) = true;
     if (D.at(v) < dv)
     {
       continue;
@@ -28,10 +26,6 @@ void dijkstra(int start)
     {
       long long u, du;
       tie(u, du) = p;
-      if (visited.at(u))
-      {
-        continue;
-      }
       if (D.at(u) > D.at(v) + du)
       {
         D.at(u) = D.at(v) + du;
