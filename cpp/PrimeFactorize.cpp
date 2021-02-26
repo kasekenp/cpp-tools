@@ -1,32 +1,32 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-vector<pair<int64_t, int64_t>> prime_factorize(int64_t N)
+vector<pair<long long, long long>> prime_factorize(long long n)
 {
-  vector<pair<int64_t, int64_t>> res;
-  for (int64_t a = 2; a * a <= N; a++)
+  vector<pair<long long, long long>> res;
+  for (long long a = 2; a * a <= n; a++)
   {
-    if (N % a != 0)
+    if (n % a != 0)
       continue;
-    int64_t ex = 0;
-    while (N % a == 0)
+    long long ex = 0;
+    while (n % a == 0)
     {
       ex++;
-      N /= a;
+      n /= a;
     }
     res.push_back({a, ex});
   }
-  if (N != 1)
-    res.push_back({N, 1});
+  if (n != 1)
+    res.push_back({n, 1});
   return res;
 }
 
 int main()
 {
-  int64_t N;
-  cin >> N;
-  const auto &res = prime_factorize(N);
-  cout << N << ":";
+  long long n;
+  cin >> n;
+  const auto &res = prime_factorize(n);
+  cout << n << ":";
   for (auto p : res)
   {
     for (int i = 0; i < p.second; ++i)
