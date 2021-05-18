@@ -23,7 +23,7 @@ public:
     }
   }
 
-  int64_t sum(int i)
+  long long sum(int i)
   {
     T s = 0;
     while (i > 0)
